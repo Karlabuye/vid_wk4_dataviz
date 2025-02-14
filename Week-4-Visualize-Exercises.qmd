@@ -8,7 +8,8 @@ format: gfm
 ```{r}
 #| label: setup
 #| include: false
-library(ggplot2)
+library(tidyverse)
+#gfm is a markdown doc visible on git hub 
 ```
 
 
@@ -19,7 +20,8 @@ Add a setup chunk that loads the tidyverse packages.
 
 
 ```{r}
-mpg
+#|label: Read in Data
+mpg #built in data set
 ```
 
 
@@ -28,6 +30,10 @@ mpg
 Run the code on the slide to make a graph. Pay strict attention to spelling, capitalization, and parentheses!
 
 ```{r}
+#|label: plot1
+#initialize with data then add mapping/aesthetics 
+ggplot(data = mpg)+
+  geom_point(aes (x= displ, y = hwy))
 
 ```
 
@@ -37,8 +43,9 @@ Run the code on the slide to make a graph. Pay strict attention to spelling, cap
 Replace this scatterplot with one that draws boxplots. Use the cheatsheet. Try your best guess.
 
 ```{r}
+#| label: changing geometries
 ggplot(data = mpg) +
-  geom_point(mapping = aes(x = class, y = hwy))
+  geom_boxplot(mapping = aes(x = class, y = hwy))
 ```
 
 
@@ -47,7 +54,9 @@ ggplot(data = mpg) +
 Make a histogram of the `hwy` variable from `mpg`. Hint: do not supply a y variable.
 
 ```{r}
-
+#|label: Histogram
+ggplot(mpg) +
+  geom_histogram(aes(x = hwy))
 ```
 
 ## Your Turn 4
@@ -55,7 +64,9 @@ Make a histogram of the `hwy` variable from `mpg`. Hint: do not supply a y varia
 Use the help page for `geom_histogram` to make the bins 2 units wide.
 
 ```{r}
-
+#|llabel: Modifying aesthetics
+ggplot(mpg) +
+  geom_histogram(aes(x = hwy),binwidth= 2)
 ```
 
 
@@ -64,8 +75,11 @@ Use the help page for `geom_histogram` to make the bins 2 units wide.
 Add `color`, `size`, `alpha`, and `shape` aesthetics to your graph. Experiment.  
 
 ```{r}
+#|label: Good Visual, Scatterplot
 ggplot(data = mpg) +
-  geom_point(mapping = aes(x = displ, y = hwy))
+  geom_point(mapping = aes(x = displ, y = hwy,color= class), alpha= 0.5 )+
+  labs(title= "The Bigger the engine the less mileage gotten on the highway", color= "Class of Vehicle", y = "Highway Mileage", x= "Size of Engine")+
+  theme_light()
 ```
 
 ## Help Me
@@ -74,13 +88,14 @@ What do `facet_grid()` and `facet_wrap()` do?
 (run the code, interpret, convince your group)
 
 ```{r}
+#|label: Faceting
 # Makes a plot that the commands below will modify
 q <- ggplot(mpg) + geom_point(aes(x = displ, y = hwy))
 
-q + facet_grid(. ~ cyl)
-q + facet_grid(drv ~ .)
-q + facet_grid(drv ~ cyl)
-q + facet_wrap(~ class)
+q + facet_grid(. ~ cyl)#multiple columns 
+q + facet_grid(drv ~ .)#multiple rows 
+q + facet_grid(drv ~ cyl)# mult columns and rows 
+q + facet_wrap(~ class)#mult columns and rows 
 ```
 
 
@@ -89,18 +104,32 @@ q + facet_wrap(~ class)
 Make a bar chart `class` colored by `class`. Use the help page for `geom_bar` to choose a "color" aesthetic for class.
 
 ```{r}
-
+#|label: Bar plot
+ggplot(mpg) +
+  geom_bar(aes(x = class, fill = class))+
+  guides(fill= "none")+ #rid of legend
+  labs(x= "Class of Vehicle", 
+       y= "Number of Vehicles in Sample")+
+  theme_bw()
+  
 ```
 
 ## Quiz
 
 What will this code do?
 
+> Two graphs on one plot overlaying the smooth trend line over a scatterplot. The graph is saved in out project/ directory with ggsave. 
+
 ```{r}
-ggplot(mpg) + 
-  geom_point(aes(displ, hwy)) +
-  geom_smooth(aes(displ, hwy)) 
-  ggsave("example.jpg")
+#|label: overlayed scatter plot
+ggplot(mpg, aes(displ, hwy)) + #make universal aesthetics so will not have to go through and put in each geom
+  geom_point(aes(color = class)) +
+  geom_smooth(color= "black",
+              se=FALSE,
+              method = "lm")+ 
+  scale_colour_viridis_d()
+
+  ggsave("example.jpg", width = 6, height = 4)
 ```
 
 
